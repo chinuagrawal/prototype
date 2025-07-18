@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enquiry Database</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #4a148c;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Enquiry Database</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Application No.</th>
+        <th>Loan Date</th>
+        <th>Loan Type</th>
+        <th>Purpose</th>
+        <th>Business Stage</th>
+        <th>Phone Number</th>
+        <th>Bank Name</th>
+
+      </tr>
+    </thead>
+    <tbody id="enquiry-table-body"></tbody>
+  </table>
+
+  <script>
+    fetch("http://localhost:3000/api/enquiry")
+      .then(res => res.json())
+      .then(data => {
+        const tableBody = document.getElementById("enquiry-table-body");
+        tableBody.innerHTML = data.map(row => `
+          <tr>
+            <td><a href="enquiry-details.html?lan=${row.loanApplicationNumber}">${row.loanApplicationNumber}</a></td>
+            <td>${new Date(row.loanApplicationDate).toLocaleDateString()}</td>
+            <td>${row.loanType}</td>
+            <td>${row.purpose || '-'}</td>
+            <td>${row.businessStage}</td>
+            <td>${row.phNumber}</td>
+            <td>${row.bankName}</td>
+          </tr>
+        `).join('');
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Enquiry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300vh;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #4a148c;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    select, input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      background-color: #4a148c;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #6a1b9a;
+    }
+
+    h3 {
+      margin: 30px 0 10px;
+      color: #4a148c;
+    }
+
+    .autocomplete-list {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1000;
+  width: 35%;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background-color: #f0eafc;
+}
+
+  </style>
+</head>
+<body>
+  <form class="form-container" id="enquiry-form">
+    <h2>New Enquiry</h2>
+
+ <h3>Borrower</h3><br>
+<label for="groupName">Group Name</label>
+<input type="text" id="groupName" autocomplete="off" placeholder="Start typing group name" required>
+<div id="groupDropdown" class="autocomplete-list"></div>
+
+
+<label for="groupCode">Group Code</label>
+<input type="text" id="groupCode" readonly>
+
+<label for="kycSelect">Select KYC Code</label>
+<select id="kycSelect"></select>
+
+<label>User Name</label>
+<input type="text" id="userName" readonly>
+
+<label>Aadhar Number</label>
+<input type="text" id="aadharNumber" readonly>
+
+<label>PAN Card</label>
+<input type="text" id="panCard" readonly>
+
+
+
+    <!-- Source -->
+    <h3>BDM Details</h3><br>
+    <label for="source">Source</label>
+    <select id="source" name="source" required>
+      <option value="" disabled selected>Select Source</option>
+      <option value="Internal BDM Team">Internal BDM Team</option>
+      <option value="Exclusive Channel Partner">Exclusive Channel Partner</option>
+      <option value="Direct">Direct</option>
+      <option value="Other">Other</option>
+    </select>
+    <input type="text" id="source-other" name="sourceOther" placeholder="Specify other source" class="hidden"/>
+
+    <!-- Sourcing RM -->
+    <label for="sourcing-rm">Sourcing RM</label>
+    <select id="sourcing-rm" name="sourcingRm" required>
+      <option value="" disabled selected>Select RM</option>
+      <option value="Team A">Team A</option>
+      <option value="Team B">Team B</option>
+      <option value="Team C">Team C</option>
+    </select>
+
+    <!-- Business Stage -->
+    <label for="business-stage">Business Stage</label>
+    <select id="business-stage" name="businessStage">
+      <option value="" disabled selected>Select Stage</option>
+      <option value="Hot Proposals">Hot Proposals</option>
+      <option value="Under Evaluation">Under Evaluation</option>
+      <option value="Term Sheet Initiated">Term Sheet Initiated</option>
+      <option value="IC Note & Due Diligence">IC Note & Due Diligence</option>
+      <option value="Sanctioned">Sanctioned</option>
+      <option value="Loan Rejected">Loan Rejected</option>
+    </select>
+
+    <!-- Loan Details -->
+    <h3>Loan Details</h3><br>
+
+    <!-- Loan Application Date -->
+    <label for="loan-application-date">Loan Application Date</label>
+    <input type="date" id="loan-application-date" name="loanApplicationDate" required />
+
+    <!-- Loan Application Number  -->
+    <label for="loan-application-number">Loan Application Number</label>
+    <input type="text" id="loan-application-number" name="loanApplicationNumber" placeholder="Enter Application Number" required />
+
+    <!-- Loan Type -->
+    <label for="loan-type">Loan Type *</label>
+    <select id="loan-type" name="loanType" required>
+      <option value="" disabled selected>Select Loan Type</option>
+      <option value="BLF">BLF - Bridge Loan Funding</option>
+      <option value="ELF">ELF - Equipment Lease Funding</option>
+      <option value="LMF">LMF - Last Mile Funding</option>
+      <option value="LAP">LAP - Loan Against Property</option>
+      <option value="RDF">RDF - Receivable Discounting Funding</option>
+      <option value="STL">STL - Seasonal Trade Loan</option>
+      <option value="Construction Finance">Construction Finance</option>
+      <option value="LPW">LPW - Loan Against Private Wealth</option>
+      <option value="NCD">NCD - Non Convertible Debenture</option>
+      <option value="Cheque Discounting">Cheque Discounting Funding</option>
+      <option value="Debentures">Debentures</option>
+      <option value="EPF">EPF - Equipment Purchase Financing</option>
+    </select>
+
+    <!-- Purpose -->
+    <label for="purpose">Purpose</label>
+    <input type="text" id="purpose" name="purpose" placeholder="Enter purpose" />
+
+<h3>Contact Details</h3>
+    <label for="first-name">First name</label>
+     <input type="text" id="first-name" name="firstName" placeholder="first name" required />
+    <label for="middle-name">Middle name</label>
+     <input type="text" id="middle-name" name="middleName" placeholder="middle name" />
+    <label for="last-name">Last name</label>
+    <input type="text" id="last-name" name="lastName" placeholder="last name" />
+    <label for="ph-number">Phone number</label>
+    <input type="text" id="ph-number" name="phNumber" placeholder="Phone number" />
+    
+    <h3>Bank Details</h3>
+    <label for="IFSC-code">IFSC Code</label>
+    <input type="text" id="IFSC-code" name="IFSCCode" placeholder="IFSC Code" required/>
+    <label for="bank-name">Bank Name</label>
+    <input type="text" id="bank-name" name="bankName" placeholder="BankName" required/>
+
+
+    <button type="submit">Submit Enquiry</button>
+    <input type="hidden" id="email" value="analyst@example.com" />
+  </form>
+
+
+  <script>
+
+    const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}');
+const userEmail = currentUser.email || '';
+const userRole = currentUser.role || '';
+
+    const sourceSelect = document.getElementById('source');
+    const otherInput = document.getElementById('source-other');
+
+    sourceSelect.addEventListener('change', () => {
+      otherInput.classList.toggle('hidden', sourceSelect.value !== 'Other');
+    });
+
+    document.getElementById("enquiry-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const data = {
+    groupName: document.getElementById("groupName").value,
+    groupCode: document.getElementById("groupCode").value,
+    kycCode: document.getElementById("kycSelect").value,
+    userName: document.getElementById("userName").value,
+    aadharNumber: document.getElementById("aadharNumber").value,
+    panCard: document.getElementById("panCard").value,
+
+    source: sourceSelect.value === 'Other' ? otherInput.value : sourceSelect.value,
+    sourcingRm: document.getElementById("sourcing-rm").value,
+    businessStage: document.getElementById("business-stage").value,
+    loanApplicationDate: document.getElementById("loan-application-date").value,
+    loanApplicationNumber: document.getElementById("loan-application-number").value,
+    loanType: document.getElementById("loan-type").value,
+    purpose: document.getElementById("purpose").value,
+
+    firstName: document.getElementById("first-name").value,
+    middleName: document.getElementById("middle-name").value,
+    lastName: document.getElementById("last-name").value,
+    phNumber: document.getElementById("ph-number").value,
+
+    IFSCCode: document.getElementById("IFSC-code").value,
+    bankName: document.getElementById("bank-name").value,
+    createdBy: userEmail,
+    createdByRole: userRole, // optional, useful if you want to track who filled it
+
+
+    
+
+  };
+
+  fetch("http://localhost:3000/api/enquiry", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(res => res.json())
+  .then(result => {
+    alert(result.message);
+    document.getElementById("enquiry-form").reset();
+    otherInput.classList.add("hidden");
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    
+    alert("Submission failed");
+  });
+});
+
+
+    document.getElementById('group-name').addEventListener('input', async (e) => {
+  const query = e.target.value;
+  const res = await fetch(`/api/groups/search?q=${query}`);
+  const groups = await res.json();
+
+  const list = document.getElementById('groupList');
+  list.innerHTML = '';
+  groups.forEach(group => {
+    const option = document.createElement('option');
+    option.value = group.name;
+    list.appendChild(option);
+  });
+});
+
+  </script>
+<script>
+let groupMap = {};  // groupName -> groupCode
+let kycMap = {};    // kycCode -> full KYC details
+
+const groupInput = document.getElementById('groupName');
+const groupCodeInput = document.getElementById('groupCode');
+const dropdown = document.getElementById('groupDropdown');
+
+// 👇 Fetch matching groups as user types
+groupInput.addEventListener('input', async function () {
+  const query = this.value.trim();
+  if (query.length < 2) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/groups/search?q=${encodeURIComponent(query)}`);
+    const groups = await res.json();
+
+    dropdown.innerHTML = '';
+    groupMap = {};
+
+    if (groups.length === 0) {
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    groups.forEach(g => {
+      const item = document.createElement('div');
+      item.className = 'autocomplete-item';
+      item.textContent = g.groupName;
+      dropdown.appendChild(item);
+
+      groupMap[g.groupName] = g.groupCode;
+
+      item.addEventListener('click', () => {
+        groupInput.value = g.groupName;
+        groupCodeInput.value = g.groupCode;
+        dropdown.innerHTML = '';
+        dropdown.style.display = 'none';
+        loadKYCForGroup(g.groupCode);
+      });
+    });
+
+    dropdown.style.display = 'block';
+
+  } catch (err) {
+    console.error('Error fetching groups:', err);
+    dropdown.style.display = 'none';
+  }
+});
+
+// 👇 When user selects a group name (either typed or from dropdown)
+function loadKYCForGroup(groupCode) {
+  fetch(`http://localhost:3000/api/groups/kyc/${groupCode}`)
+    .then(res => res.json())
+    .then(kycs => {
+      const kycSelect = document.getElementById('kycSelect');
+      kycSelect.innerHTML = `<option value="">Select</option>`;
+      kycMap = {};
+
+      kycs.forEach(k => {
+        const option = document.createElement('option');
+        option.value = k.kycCode;
+        option.textContent = k.kycCode;
+        kycSelect.appendChild(option);
+
+        kycMap[k.kycCode] = {
+          userName: k.userName,
+          aadharNumber: k.aadharNumber,
+          panCard: k.panCard
+        };
+      });
+    })
+    .catch(err => {
+      console.error('Error fetching KYC:', err);
+    });
+}
+
+
+// 👇 When a KYC Code is selected, autofill details
+document.getElementById('kycSelect').addEventListener('change', function () {
+  const kyc = kycMap[this.value];
+  document.getElementById('userName').value = kyc?.userName || '';
+  document.getElementById('aadharNumber').value = kyc?.aadharNumber || '';
+  document.getElementById('panCard').value = kyc?.panCard || '';
+});
+
+// 👇 Hide dropdown when clicking outside
+document.addEventListener('click', function (e) {
+  if (!dropdown.contains(e.target) && e.target !== groupInput) {
+    dropdown.style.display = 'none';
+  }
+});
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Group Entry Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 40px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #4a148c;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-top: 15px;
+      background-color: #4a148c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #6a1b9a;
+    }
+
+    .kyc-list {
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .kyc-list div {
+      background: #f8f8f8;
+      padding: 5px 10px;
+      margin: 3px 0;
+      border-left: 4px solid #4a148c;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Add Group & KYC</h2>
+    <form id="group-form">
+      <label>Group Name</label>
+      <input type="text" id="groupName" required />
+
+      <label>Group Code</label>
+      <input type="text" id="groupCode" required />
+
+      <label>Add KYC Codes (one at a time)</label>
+      <input type="text" id="kycInput" placeholder="Enter KYC code" />
+      
+
+      <button type="submit">Submit Group</button>
+    </form>
+
+   
+  <br>
+
+  <h2>Add KYC to Existing Group</h2>
+<form id="kyc-form">
+  <label for="existingGroup">Select Group</label>
+  <select id="existingGroup" required></select>
+
+ <label>KYC Code</label>
+<input type="text" id="kycCodeInput" placeholder="Enter KYC code" />
+
+<label>User Name</label>
+<input type="text" id="kycNameInput" placeholder="Enter User Name" />
+
+<label>Aadhar Number</label>
+<input type="text" id="kycAadharInput" placeholder="Enter Aadhar Number" />
+
+<label>PAN Card</label>
+<input type="text" id="kycPanInput" placeholder="Enter PAN Number" />
+
+<button type="submit">Add KYC</button>
+</form>
+
+ <h3>Existing Groups</h3>
+    <table id="groupTable">
+      <thead>
+        <tr><th>Group Name</th><th>Code</th><th>KYC code</th></tr>
+
+      </thead>
+      <tbody></tbody>
+    </table>
+    <br>
+<h3>All KYC Entries</h3>
+<table id="kycDetailTable">
+  <thead>
+    <tr>
+      <th>KYC Code</th>
+      <th>User Name</th>
+      <th>Aadhar</th>
+      <th>PAN</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+</div>
+ <script>
+  const kycs = [];
+
+  function addKyc() {
+    const kycCode = document.getElementById("kycCodeInput").value.trim();
+    const userName = document.getElementById("kycNameInput").value.trim();
+    const aadharNumber = document.getElementById("kycAadharInput").value.trim();
+    const panCard = document.getElementById("kycPanInput").value.trim();
+
+    if (!kycCode) {
+      alert("KYC Code is required");
+      return;
+    }
+
+    kycs.push({ kycCode, userName, aadharNumber, panCard });
+    updateKycList();
+
+    document.getElementById("kycCodeInput").value = '';
+    document.getElementById("kycNameInput").value = '';
+    document.getElementById("kycAadharInput").value = '';
+    document.getElementById("kycPanInput").value = '';
+  }
+
+  function updateKycList() {
+    document.getElementById("kycList").innerHTML = kycs.map(k => `
+      <div>
+        <strong>${k.kycCode}</strong> — ${k.userName} | Aadhar: ${k.aadharNumber}, PAN: ${k.panCard}
+      </div>
+    `).join('');
+  }
+
+  document.getElementById("group-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const groupName = document.getElementById("groupName").value.trim();
+    const groupCode = document.getElementById("groupCode").value.trim();
+
+    if (!groupName || !groupCode) {
+      alert("Please fill in group name and code");
+      return;
+    }
+
+    // Step 1: Create the group
+    const groupRes = await fetch("http://localhost:3000/api/groups/group", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groupName, groupCode })
+    });
+
+    if (!groupRes.ok) {
+      const result = await groupRes.json();
+      return alert(result.message || "Error adding group");
+    }
+
+    // Step 2: Add KYC entries
+    for (let k of kycs) {
+      await fetch("http://localhost:3000/api/groups/kyc", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groupCode,
+          kycCode: k.kycCode,
+          userName: k.userName,
+          aadharNumber: k.aadharNumber,
+          panCard: k.panCard
+        })
+      });
+    }
+
+    alert("Group and KYC entries saved successfully");
+
+    // Reset form
+    kycs.length = 0;
+    updateKycList();
+    this.reset();
+    loadGroups();
+    loadGroupDropdown();
+  });
+
+ async function loadGroups() {
+  const res = await fetch("http://localhost:3000/api/groups/group-names");
+  const data = await res.json();
+  const table = document.querySelector("#groupTable tbody");
+
+  const rows = await Promise.all(data.map(async g => {
+    const kycRes = await fetch(`http://localhost:3000/api/groups/kyc/${g.groupCode}`);
+    const kycList = await kycRes.json();
+
+    const kycsHTML = kycList.map(k => `<span>${k.kycCode}</span>`).join(', ');
+
+    return `
+      <tr>
+        <td>${g.groupName}</td>
+        <td>${g.groupCode}</td>
+        <td>${kycsHTML}</td>
+      </tr>
+    `;
+  }));
+
+  table.innerHTML = rows.join('');
+}
+
+
+  async function loadGroupDropdown() {
+    const res = await fetch("http://localhost:3000/api/groups/group-names");
+    const data = await res.json();
+    const dropdown = document.getElementById("existingGroup");
+
+    dropdown.innerHTML = `<option value="">Select Group</option>` +
+      data.map(g => `<option value="${g.groupCode}">${g.groupName} (${g.groupCode})</option>`).join('');
+  }
+
+  document.getElementById("kyc-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const groupCode = document.getElementById("existingGroup").value;
+  const kycCode = document.getElementById("kycCodeInput").value.trim();
+  const userName = document.getElementById("kycNameInput").value.trim();
+  const aadharNumber = document.getElementById("kycAadharInput").value.trim();
+  const panCard = document.getElementById("kycPanInput").value.trim();
+
+  if (!groupCode || !kycCode) {
+    alert("Group and KYC Code are required");
+    return;
+  }
+
+  const res = await fetch("http://localhost:3000/api/groups/kyc", {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ groupCode, kycCode, userName, aadharNumber, panCard })
+  });
+
+  const result = await res.json();
+  if (res.ok) {
+    alert("KYC added successfully");
+    this.reset();
+    loadGroups();
+  } else {
+    alert(result.message || "Failed to add KYC");
+  }
+});
+
+let editKYCId = '';
+function editKYC(id, code, name, aadhar, pan) {
+  editKYCId = id;
+  document.getElementById('editUserName').value = name || '';
+  document.getElementById('editAadhar').value = aadhar || '';
+  document.getElementById('editPan').value = pan || '';
+  document.getElementById('editModal').style.display = 'flex';
+}
+
+
+async function loadAllKycs() {
+  const res = await fetch("http://localhost:3000/api/groups/all-kycs");
+  const data = await res.json();
+
+  const table = document.querySelector("#kycDetailTable tbody");
+
+  const rows = data.map(k => `
+    <tr>
+      <td>${k.kycCode}</td>
+      <td>${k.userName || ''}</td>
+      <td>${k.aadharNumber || ''}</td>
+      <td>${k.panCard || ''}</td>
+      <td><button onclick="editKYC('${k._id}', '${k.kycCode}', '${k.userName}', '${k.aadharNumber}', '${k.panCard}')">Edit</button></td>
+    </tr>
+  `).join('');
+
+  table.innerHTML = rows;
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  editKYCId = '';
+}
+
+async function saveKYCEdit() {
+  const newName = document.getElementById('editUserName').value.trim();
+  const newAadhar = document.getElementById('editAadhar').value.trim();
+  const newPan = document.getElementById('editPan').value.trim();
+
+  if (!newName || !newAadhar || !newPan) {
+    alert('All fields are required');
+    return;
+  }
+
+  const res = await fetch(`http://localhost:3000/api/groups/kyc/${editKYCId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userName: newName, aadharNumber: newAadhar, panCard: newPan })
+  });
+
+  const result = await res.json();
+  if (res.ok) {
+    alert('Saved successfully');
+    closeEditModal();
+    loadGroups();
+    loadAllKycs();
+  } else {
+    alert(result.message || 'Failed to update');
+  }
+}
+
+
+  // Initial load
+  loadGroups();
+  loadGroupDropdown();
+  loadAllKycs();
+</script>
+
+
+
+
+
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background-color:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000;">
+  <div style="background:#fff; padding:20px; border-radius:10px; width:90%; max-width:400px; box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+    <h3 style="color:#4a148c;">Edit KYC Entry</h3>
+    <label>User Name</label>
+    <input type="text" id="editUserName" style="width:100%; padding:8px; margin-bottom:10px;" />
+    <label>Aadhar Number</label>
+    <input type="text" id="editAadhar" style="width:100%; padding:8px; margin-bottom:10px;" />
+    <label>PAN Card</label>
+    <input type="text" id="editPan" style="width:100%; padding:8px;" />
+    <div style="text-align:right; margin-top:15px;">
+      <button onclick="closeEditModal()" style="margin-right:10px;">Cancel</button>
+      <button onclick="saveKYCEdit()">OK</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

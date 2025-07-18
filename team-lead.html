@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Team Lead Approval</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f4f4f4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #4a148c;
+      color: white;
+    }
+    button {
+      padding: 6px 12px;
+      margin: 4px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .approve {
+      background-color: #4caf50;
+      color: white;
+    }
+    .reject {
+      background-color: #f44336;
+      color: white;
+    }
+    textarea {
+      width: 100%;
+      margin-top: 4px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h2>Team Lead - Enquiry Review</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Application No.</th>
+        <th>Loan Date</th>
+        <th>Loan Type</th>
+        <th>Stage</th>
+        <th>Phone</th>
+        <th>Group</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="enquiry-table-body"></tbody>
+  </table>
+
+  <script>
+    async function loadEnquiries() {
+      try {
+        const res = await fetch("http://localhost:3000/api/enquiry");
+        const data = await res.json();
+
+        const pending = data.filter(e =>
+  e.createdByRole === 'analyst' &&
+  !e.status?.teamLead?.approved &&
+  !e.status?.teamLead?.rejected
+);
+
+
+        const tbody = document.getElementById('enquiry-table-body');
+        tbody.innerHTML = '';
+
+        pending.forEach(e => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><a href="enquiry-details.html?lan=${e.loanApplicationNumber}">${e.loanApplicationNumber}</a></td>
+            <td>${new Date(e.loanApplicationDate).toLocaleDateString()}</td>
+            <td>${e.loanType}</td>
+            <td>${e.businessStage}</td>
+            <td>${e.phNumber}</td>
+            <td>${e.groupName}</td>
+            <td>
+              <button class="approve" onclick="handleApprove('${e._id}')">Approve</button>
+              <button class="reject" onclick="toggleReject('${e._id}')">Reject</button>
+              <div id="reject-box-${e._id}" style="display:none; margin-top:4px;">
+                <textarea id="reason-${e._id}" rows="2" placeholder="Enter rejection reason"></textarea>
+                <button class="reject" onclick="handleReject('${e._id}')">Confirm Reject</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        alert("Error loading enquiries: " + err.message);
+      }
+    }
+
+    function toggleReject(id) {
+      const box = document.getElementById(`reject-box-${id}`);
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function handleApprove(id) {
+      const res = await fetch(`http://localhost:3000/api/enquiry/approve/team-lead/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const result = await res.json();
+      if (result.message) {
+        alert(result.message);
+        loadEnquiries();
+      }
+    }
+
+    async function handleReject(id) {
+      const reason = document.getElementById(`reason-${id}`).value.trim();
+      if (!reason) return alert("Please enter a rejection reason.");
+      
+      const res = await fetch(`http://localhost:3000/api/enquiry/reject/team-lead/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+      const result = await res.json();
+      if (result.message) {
+        alert(result.message);
+        loadEnquiries();
+      }
+    }
+
+    loadEnquiries();
+  </script>
+</body>
+</html>

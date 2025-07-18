@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Enquiries - Analyst</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #333;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .status-Approved {
+      color: green;
+      font-weight: bold;
+    }
+    .status-Rejected {
+      color: red;
+      font-weight: bold;
+    }
+    .status-Pending {
+      color: orange;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Submitted Enquiries - Status</h1>
+  <table id="enquiryTable">
+    <thead>
+      <tr>
+        <th>Loan No.</th>
+        <th>Borrower</th>
+        <th>Group</th>
+        <th>Status</th>
+        <th>Rejected By</th>
+        <th>Comment</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="error" id="errorMsg"></p>
+
+ <script>
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  const analystEmail = user.email;
+
+  async function loadEnquiries() {
+    try {
+      const res = await fetch('http://localhost:3000/api/enquiry/my-submissions?email=' + encodeURIComponent(analystEmail));
+      if (!res.ok) throw new Error("Failed to fetch enquiries");
+
+      const enquiries = await res.json();
+      const tbody = document.querySelector('#enquiryTable tbody');
+      tbody.innerHTML = '';
+
+      if (!enquiries.length) {
+        document.getElementById("errorMsg").textContent = "No enquiries submitted by you.";
+        return;
+      }
+
+      enquiries.forEach(entry => {
+        const tr = document.createElement('tr');
+
+        let status = 'Pending';
+        let statusClass = 'Pending';
+        let rejectedBy = '-';
+        let rejectionComment = '-';
+
+        if (entry.rejectedBy) {
+          status = 'Rejected';
+          statusClass = 'Rejected';
+          rejectedBy = entry.rejectedBy;
+          rejectionComment = entry.rejectionReason || '-';
+        } else if (entry.status?.roshan?.approved) {
+          status = 'Approved by Roshan';
+          statusClass = 'Approved';
+        } else if (entry.status?.teamManager?.approved) {
+          status = 'Approved by Team Manager';
+          statusClass = 'Approved';
+        } else if (entry.status?.teamLead?.approved) {
+          status = 'Approved by Team Lead';
+          statusClass = 'Approved';
+        }
+
+        const loanAppNum = entry.loanApplicationNumber || '-';
+
+        tr.innerHTML = `
+          <td><a href="enquiry-details.html?lan=${encodeURIComponent(loanAppNum)}">${loanAppNum}</a></td>
+          <td>${entry.firstName || ''} ${entry.middleName || ''} ${entry.lastName || ''}</td>
+          <td>${entry.groupName || '-'}</td>
+          <td class="status-${statusClass}">${status}</td>
+          <td>${rejectedBy}</td>
+          <td>${rejectionComment}</td>
+          <td><button onclick="viewDetails('${loanAppNum}')">View</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    } catch (err) {
+      console.error("Error fetching enquiries:", err);
+      document.getElementById("errorMsg").textContent =
+        "Something went wrong while fetching enquiries: " + err.message;
+    }
+  }
+
+  function viewDetails(loanAppNum) {
+    // Navigate using loan application number in URL as a query param
+    window.location.href = `enquiry-details.html?lan=${encodeURIComponent(loanAppNum)}`;
+  }
+
+  loadEnquiries();
+</script>
+
+</body>
+</html>

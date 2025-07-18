@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enquiry Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+    h2 {
+      color: #4a148c;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      max-width: 700px;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      text-align: left;
+      background-color: #f2f2f2;
+      width: 30%;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Enquiry Details</h2>
+<table id="details-table"></table>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const lan = params.get('lan');
+
+  if (!lan) {
+    document.getElementById('details-table').innerHTML = '<tr><td>Invalid request</td></tr>';
+  } else {
+    fetch(`http://localhost:3000/api/enquiry/${lan}`)
+      .then(res => res.json())
+      .then(data => {
+        const table = document.getElementById('details-table');
+        table.innerHTML = `
+          <tr><th>Loan Application Number</th><td>${data.loanApplicationNumber}</td></tr>
+          <tr><th>Source</th><td>${data.source}</td></tr>
+          <tr><th>Sourcing RM</th><td>${data.sourcingRm}</td></tr>
+          <tr><th>Business Stage</th><td>${data.businessStage}</td></tr>
+          <tr><th>Loan Application Date</th><td>${data.loanApplicationDate?.split('T')[0]}</td></tr>
+          <tr><th>Loan Type</th><td>${data.loanType}</td></tr>
+          <tr><th>First Name</th><td>${data.firstName}</td></tr>
+          <tr><th>Middle Name</th><td>${data.middleName}</td></tr>
+          <tr><th>Last Name</th><td>${data.lastName}</td></tr>
+          <tr><th>Phone Number</th><td>${data.phNumber}</td></tr>
+          <tr><th>IFSC Code</th><td>${data.IFSCCode}</td></tr>
+          <tr><th>Bank Name</th><td>${data.bankName}</td></tr>
+
+        `;
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('details-table').innerHTML = '<tr><td>Error loading details</td></tr>';
+      });
+  }
+</script>
+
+</body>
+</html>
