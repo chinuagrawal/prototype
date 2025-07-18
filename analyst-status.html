@@ -87,7 +87,7 @@
 
   async function loadEnquiries() {
     try {
-      const res = await fetch('http://localhost:3000/api/enquiry/my-submissions?email=' + encodeURIComponent(analystEmail));
+      const res = await fetch('https://prototype-p1t9.onrender.com/api/enquiry/my-submissions?email=' + encodeURIComponent(analystEmail));
       if (!res.ok) throw new Error("Failed to fetch enquiries");
 
       const enquiries = await res.json();

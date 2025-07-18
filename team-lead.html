@@ -68,7 +68,7 @@
   <script>
     async function loadEnquiries() {
       try {
-        const res = await fetch("http://localhost:3000/api/enquiry");
+        const res = await fetch("https://prototype-p1t9.onrender.com/api/enquiry");
         const data = await res.json();
 
         const pending = data.filter(e =>
@@ -112,7 +112,7 @@
     }
 
     async function handleApprove(id) {
-      const res = await fetch(`http://localhost:3000/api/enquiry/approve/team-lead/${id}`, {
+      const res = await fetch(`https://prototype-p1t9.onrender.com/api/enquiry/approve/team-lead/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -127,7 +127,7 @@
       const reason = document.getElementById(`reason-${id}`).value.trim();
       if (!reason) return alert("Please enter a rejection reason.");
       
-      const res = await fetch(`http://localhost:3000/api/enquiry/reject/team-lead/${id}`, {
+      const res = await fetch(`https://prototype-p1t9.onrender.com/api/enquiry/reject/team-lead/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason })

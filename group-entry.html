@@ -189,7 +189,7 @@
     }
 
     // Step 1: Create the group
-    const groupRes = await fetch("http://localhost:3000/api/groups/group", {
+    const groupRes = await fetch("https://prototype-p1t9.onrender.com/api/groups/group", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ groupName, groupCode })
@@ -202,7 +202,7 @@
 
     // Step 2: Add KYC entries
     for (let k of kycs) {
-      await fetch("http://localhost:3000/api/groups/kyc", {
+      await fetch("https://prototype-p1t9.onrender.com/api/groups/kyc", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -226,12 +226,12 @@
   });
 
  async function loadGroups() {
-  const res = await fetch("http://localhost:3000/api/groups/group-names");
+  const res = await fetch("https://prototype-p1t9.onrender.com/api/groups/group-names");
   const data = await res.json();
   const table = document.querySelector("#groupTable tbody");
 
   const rows = await Promise.all(data.map(async g => {
-    const kycRes = await fetch(`http://localhost:3000/api/groups/kyc/${g.groupCode}`);
+    const kycRes = await fetch(`https://prototype-p1t9.onrender.com/api/groups/kyc/${g.groupCode}`);
     const kycList = await kycRes.json();
 
     const kycsHTML = kycList.map(k => `<span>${k.kycCode}</span>`).join(', ');
@@ -250,7 +250,7 @@
 
 
   async function loadGroupDropdown() {
-    const res = await fetch("http://localhost:3000/api/groups/group-names");
+    const res = await fetch("https://prototype-p1t9.onrender.com/api/groups/group-names");
     const data = await res.json();
     const dropdown = document.getElementById("existingGroup");
 
@@ -272,7 +272,7 @@
     return;
   }
 
-  const res = await fetch("http://localhost:3000/api/groups/kyc", {
+  const res = await fetch("https://prototype-p1t9.onrender.com/api/groups/kyc", {
     method: "POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ groupCode, kycCode, userName, aadharNumber, panCard })
@@ -299,7 +299,7 @@ function editKYC(id, code, name, aadhar, pan) {
 
 
 async function loadAllKycs() {
-  const res = await fetch("http://localhost:3000/api/groups/all-kycs");
+  const res = await fetch("https://prototype-p1t9.onrender.com/api/groups/all-kycs");
   const data = await res.json();
 
   const table = document.querySelector("#kycDetailTable tbody");
@@ -332,7 +332,7 @@ async function saveKYCEdit() {
     return;
   }
 
-  const res = await fetch(`http://localhost:3000/api/groups/kyc/${editKYCId}`, {
+  const res = await fetch(`https://prototype-p1t9.onrender.com/api/groups/kyc/${editKYCId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userName: newName, aadharNumber: newAadhar, panCard: newPan })

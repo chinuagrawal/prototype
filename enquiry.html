@@ -257,7 +257,7 @@ const userRole = currentUser.role || '';
 
   };
 
-  fetch("http://localhost:3000/api/enquiry", {
+  fetch("https://prototype-p1t9.onrender.com/api/enquiry", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
@@ -308,7 +308,7 @@ groupInput.addEventListener('input', async function () {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/groups/search?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`https://prototype-p1t9.onrender.com/api/groups/search?q=${encodeURIComponent(query)}`);
     const groups = await res.json();
 
     dropdown.innerHTML = '';
@@ -346,7 +346,7 @@ groupInput.addEventListener('input', async function () {
 
 // 👇 When user selects a group name (either typed or from dropdown)
 function loadKYCForGroup(groupCode) {
-  fetch(`http://localhost:3000/api/groups/kyc/${groupCode}`)
+  fetch(`https://prototype-p1t9.onrender.com/api/groups/kyc/${groupCode}`)
     .then(res => res.json())
     .then(kycs => {
       const kycSelect = document.getElementById('kycSelect');
