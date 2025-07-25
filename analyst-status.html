@@ -146,7 +146,12 @@
           <td class="status-${statusClass}">${status}</td>
           <td>${rejectedBy}</td>
           <td>${rejectionComment}</td>
-          <td><button onclick="viewDetails('${loanAppNum}')">View</button></td>
+          <td>
+          <button onclick="viewDetails('${loanAppNum}')">View</button>
+          ${status === 'Rejected' ? `<button onclick="editEnquiry('${entry.loanApplicationNumber}')">Edit</button>` : ''}
+          </td>
+
+          
         `;
         tbody.appendChild(tr);
       });
@@ -162,6 +167,10 @@
     // Navigate using loan application number in URL as a query param
     window.location.href = `enquiry-details.html?lan=${encodeURIComponent(loanAppNum)}`;
   }
+  function editEnquiry(loanAppNum) {
+  window.location.href = `enquiryDetailsEdit.html?loanApplicationNumber=${loanAppNum}`;
+}
+
 
   loadEnquiries();
 </script>

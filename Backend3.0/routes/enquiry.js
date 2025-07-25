@@ -4,6 +4,8 @@ const Enquiry = require('../models/Enquiry');
 const { v4: uuidv4 } = require('uuid');
 
 
+
+
 router.get('/my-submissions', async (req, res) => {
   const email = req.query.email;
   if (!email) return res.status(400).json({ error: "Email is required" });
@@ -88,7 +90,6 @@ router.get('/', async (req, res) => {
 
 
 // Approve by Team Lead
-// Approve by Team Lead
 router.post('/approve/team-lead/:id', async (req, res) => {
   try {
     const update = {
@@ -172,6 +173,64 @@ router.get('/pending/team-lead', async (req, res) => {
     res.status(500).json({ message: 'Error fetching pending enquiries' });
   }
 });
+
+
+router.delete('/delete-by-lan/:loanApplicationNumber', async (req, res) => {
+  try {
+    const result = await Enquiry.findOneAndDelete({ loanApplicationNumber: req.params.loanApplicationNumber });
+    if (!result) return res.status(404).json({ message: 'Enquiry not found' });
+    res.json({ message: 'Enquiry deleted' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update enquiry by loanApplicationNumber
+// PUT /api/enquiry/:loanApplicationNumber
+router.put('/:loanApplicationNumber', async (req, res) => {
+  const updatedData = req.body;
+
+ 
+
+// Reset rejection data before resubmitting
+updatedData['status.teamLead.approved'] = false;
+updatedData['status.teamLead.rejected'] = false;
+updatedData['status.teamLead.comment'] = '';
+updatedData['status.teamLead.date'] = null;
+
+updatedData['status.teamManager.approved'] = false;
+updatedData['status.teamManager.rejected'] = false;
+updatedData['status.teamManager.comment'] = '';
+updatedData['status.teamManager.date'] = null;
+
+updatedData['status.roshan.approved'] = false;
+updatedData['status.roshan.rejected'] = false;
+updatedData['status.roshan.comment'] = '';
+updatedData['status.roshan.date'] = null;
+
+updatedData.rejectionReason = '';
+updatedData.rejectedBy = '';
+
+  try {
+    const { loanApplicationNumber } = req.params;
+
+    const updated = await Enquiry.findOneAndUpdate(
+      { loanApplicationNumber },
+      updatedData,
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Enquiry not found' });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error('PUT /api/enquiry/:loanApplicationNumber failed:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 
 

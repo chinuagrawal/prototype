@@ -4,6 +4,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const Enquiry = require('./models/Enquiry'); // or adjust path if inside /models
+
+
 const app = express();
 app.get("/", (req, res) => res.send("Server is running"));
 const PORT = process.env.PORT || 3000;
@@ -27,6 +30,10 @@ app.use('/api/groups', groupRoutes);
 
 const enquiryRoutes = require('./routes/enquiry');
 app.use('/api/enquiry', enquiryRoutes);  // ✅ Correct route mount
+
+
+
+
 
 const authRoutes = require('./routes/auth');
 app.use('/api', authRoutes);             // ✅ OK for /api/login etc.

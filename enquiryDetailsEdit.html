@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Enquiry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #f4f4f4; }
+    form { max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 15px; }
+    input, select { width: 100%; padding: 10px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; background: #4a148c; color: #fff; border: none; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #38006b; }
+  </style>
+</head>
+<body>
+
+<h2>Edit Enquiry</h2>
+
+<form id="edit-form">
+  <label>Loan Application Number: <input type="text" id="loanApplicationNumber" required></label>
+  <label>Loan Application Date: <input type="date" id="loanApplicationDate" required></label>
+  <label>Loan Type: <input type="text" id="loanType" required></label>
+  <label>Purpose: <input type="text" id="purpose"></label>
+  <label>Business Stage: <input type="text" id="businessStage"></label>
+  <label>First Name: <input type="text" id="firstName" required></label>
+  <label>Middle Name: <input type="text" id="middleName"></label>
+  <label>Last Name: <input type="text" id="lastName" required></label>
+  <label>Phone Number: <input type="text" id="phNumber" required></label>
+  <label>IFSC Code: <input type="text" id="IFSCCode"></label>
+  <label>Bank Name: <input type="text" id="bankName"></label>
+
+  <button type="submit">Submit Edited Enquiry</button>
+</form>
+
+<script>
+  const form = document.getElementById("edit-form");
+  const loanAppNum = new URLSearchParams(window.location.search).get("loanApplicationNumber");
+  const API_BASE = "https://prototype-p1t9.onrender.com/api/enquiry";
+  let originalEnquiryId = null;
+
+  if (!loanAppNum) {
+    alert("Missing loanApplicationNumber in URL.");
+  } else {
+    // Fetch by Loan Application Number
+    fetch(`${API_BASE}/${loanAppNum}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data._id) {
+          alert("Enquiry not found.");
+          return;
+        }
+
+        // Store ID for later delete
+        originalEnquiryId = data._id;
+
+        // Populate form
+        document.getElementById("loanApplicationNumber").value = data.loanApplicationNumber || "";
+        document.getElementById("loanApplicationDate").value = data.loanApplicationDate?.split("T")[0] || "";
+        document.getElementById("loanType").value = data.loanType || "";
+        document.getElementById("purpose").value = data.purpose || "";
+        document.getElementById("businessStage").value = data.businessStage || "";
+        document.getElementById("firstName").value = data.firstName || "";
+        document.getElementById("middleName").value = data.middleName || "";
+        document.getElementById("lastName").value = data.lastName || "";
+        document.getElementById("phNumber").value = data.phNumber || "";
+        document.getElementById("IFSCCode").value = data.IFSCCode || "";
+        document.getElementById("bankName").value = data.bankName || "";
+      })
+      .catch(err => {
+        alert("Error fetching enquiry details");
+        console.error(err);
+      });
+  }
+
+  form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const payload = {
+  loanApplicationNumber: document.getElementById("loanApplicationNumber").value,
+  loanApplicationDate: document.getElementById("loanApplicationDate").value,
+  loanType: document.getElementById("loanType").value,
+  purpose: document.getElementById("purpose").value,
+  businessStage: document.getElementById("businessStage").value,
+  firstName: document.getElementById("firstName").value,
+  middleName: document.getElementById("middleName").value,
+  lastName: document.getElementById("lastName").value,
+  phNumber: document.getElementById("phNumber").value,
+  IFSCCode: document.getElementById("IFSCCode").value,
+  bankName: document.getElementById("bankName").value,
+  createdBy: JSON.parse(sessionStorage.getItem("user") || "{}").email || "unknown",
+  createdByRole: JSON.parse(sessionStorage.getItem("user") || "{}").role || "analyst"
+};
+
+  try {
+    const updateRes = await fetch(`${API_BASE}/${loanAppNum}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!updateRes.ok) {
+      const errText = await updateRes.text();
+      console.error("Error response:", errText);
+      alert("Failed to update enquiry.");
+      return;
+    }
+
+    alert("Enquiry updated successfully.");
+    window.location.href = "analyst-status.html";
+  } catch (err) {
+    alert("Error submitting enquiry");
+    console.error("Error during submission:", err);
+  }
+});
+
+</script>
+
+</body>
+</html>
