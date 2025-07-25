@@ -31,9 +31,24 @@
       background-color: #f2f2f2;
       width: 30%;
     }
+
+    .top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 30px 0 30px;
+}
+
+.company-logo {
+  height: 50px;
+  object-fit: contain;
+}
   </style>
 </head>
 <body>
+  <div class="top-bar">
+  <img src="logo.png" alt="Company Logo" class="company-logo">
+</div>
 
 <h2>Enquiry Details</h2>
 <table id="details-table"></table>
