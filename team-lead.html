@@ -6,47 +6,122 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
+ <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    padding: 40px;
+    margin: 0;
+    background: #f4f4f8;
+    color: #333;
+  }
+
+  h2 {
+    color: #4a148c;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    background-color: transparent;
+  }
+
+  th, td {
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  th {
+    background-color: #4a148c;
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  tr:hover td {
+    background-color: #f3f0fb;
+  }
+
+  button {
+    padding: 8px 14px;
+    margin: 4px 4px 0 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .approve {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .approve:hover {
+    background-color: #45a045;
+  }
+
+  .reject {
+    background-color: #f44336;
+    color: white;
+  }
+
+  .reject:hover {
+    background-color: #d32f2f;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 6px;
+    resize: vertical;
+    background-color: #fff;
+  }
+
+  #enquiry-table-body button {
+    margin-bottom: 6px;
+  }
+
+  a {
+    color: #4a148c;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
     body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
-      background: #f4f4f4;
+      padding: 20px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+
+    table, th, td {
+      font-size: 0.85rem;
     }
-    th, td {
-      padding: 12px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    th {
-      background-color: #4a148c;
-      color: white;
-    }
+
     button {
-      padding: 6px 12px;
-      margin: 4px;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .approve {
-      background-color: #4caf50;
-      color: white;
-    }
-    .reject {
-      background-color: #f44336;
-      color: white;
-    }
-    textarea {
       width: 100%;
-      margin-top: 4px;
-      display: block;
+      margin: 6px 0;
     }
-  </style>
+
+    textarea {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
 </head>
 <body>
   <h2>Team Lead - Enquiry Review</h2>
@@ -66,6 +141,14 @@
   </table>
 
   <script>
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "team-lead") {
+      alert("Access denied! Tead-lead only.");
+      window.location.href = "login.html";
+    }
+
+    
     async function loadEnquiries() {
       try {
         const res = await fetch("https://prototype-p1t9.onrender.com/api/enquiry");
