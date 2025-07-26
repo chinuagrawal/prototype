@@ -102,6 +102,18 @@
     text-decoration: underline;
   }
 
+   .top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 30px 0 30px;
+}
+
+.company-logo {
+  height: 80px;
+  object-fit: contain;
+}
+
   @media (max-width: 768px) {
     body {
       padding: 20px;
@@ -124,6 +136,9 @@
 
 </head>
 <body>
+  <div class="top-bar">
+  <img src="logo.png" alt="Company Logo" class="company-logo">
+</div>
   <h2>Team Lead - Enquiry Review</h2>
   <table>
     <thead>
