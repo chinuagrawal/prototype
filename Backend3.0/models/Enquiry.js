@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const enquirySchema = new mongoose.Schema({
   // Borrower & Group Details
   groupName: String,
-  GroupCode: String,
+  groupCode: String,
   kycCode: String,
   userName: String,
   aadharNumber: String,
