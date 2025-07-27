@@ -42,6 +42,11 @@ router.post('/', async (req, res) => {
   IFSCCode,
   bankName,
   groupName,
+  groupCode,          // ✅ Add this
+  kycCode,            // ✅ Add this
+  userName,           // ✅ Add this
+  aadharNumber,       // ✅ Add this
+  panCard,  
   KycSelect,
   createdBy,        // ✅ from frontend
   createdByRole     // ✅ from frontend
@@ -63,6 +68,11 @@ router.post('/', async (req, res) => {
   IFSCCode,
   bankName,
   groupName,
+  groupCode,          // ✅ Add this
+  kycCode,            // ✅ Add this
+  userName,           // ✅ Add this
+  aadharNumber,       // ✅ Add this
+  panCard,  
   KycSelect,
   createdBy,
   createdByRole
