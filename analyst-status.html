@@ -141,7 +141,7 @@
 
         tr.innerHTML = `
           <td><a href="enquiry-details.html?lan=${encodeURIComponent(loanAppNum)}">${loanAppNum}</a></td>
-          <td>${entry.firstName || ''} ${entry.middleName || ''} ${entry.lastName || ''}</td>
+          <td>${entry.userName || ''}</td>
           <td>${entry.groupName || '-'}</td>
           <td class="status-${statusClass}">${status}</td>
           <td>${rejectedBy}</td>

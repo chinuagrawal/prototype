@@ -66,6 +66,11 @@
         const table = document.getElementById('details-table');
         table.innerHTML = `
           <tr><th>Loan Application Number</th><td>${data.loanApplicationNumber}</td></tr>
+
+          <tr><th>Group Name</th><td>${data.groupName}</td></tr>
+          <tr><th>Borrower</th><td>${data.userName}</td></tr>
+          <tr><th>Aadhar Number</th><td>${data.aadharNumber}</td></tr>
+          <tr><th>Pan Card</th><td>${data.panCard}</td></tr>
           <tr><th>Source</th><td>${data.source}</td></tr>
           <tr><th>Sourcing RM</th><td>${data.sourcingRm}</td></tr>
           <tr><th>Business Stage</th><td>${data.businessStage}</td></tr>
